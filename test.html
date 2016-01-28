@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+        <input type="text" name="testvalue" id="testvalue"><button id="starttest">test</button> (Open console) <br>
+        <canvas id="canvas"></canvas>
+
+        <script src="https://cdn.jsdelivr.net/jquery/3.0.0-beta1/jquery.min.js"></script>
+        <script src="js/verb.js"></script>
+        <script src="js/characterfinder.js"></script>
+        <script>
+        
+        var finder;
+        
+        window.onload = function(){
+            finder = new CharacterFinder( $( "#canvas" ).get( 0 ), 145, 60 );
+            
+            finder.onComplete(function( file, result){
+                console.log(file, result);
+                $("body").append($( "#canvas" ).clone( ));
+                doNext();
+            });
+            
+            $.getJSON('img/files.php', function(data){
+                imgArray = data;
+                finder.setImg('img/1183.jpg');
+            });
+            
+            $("#starttest").on('click', function(){
+                var name = $("#testvalue").val();
+                finder.setImg('img/' + name + '.jpg');
+            });
+        };
+        
+        var currentImgIndex = 0;
+        var successes = 0;
+        var imgArray = [];
+        
+        function doNext(){
+            currentImgIndex++;
+            
+            if( currentImgIndex < imgArray.length ){
+                finder.setImg('img/' + imgArray[ currentImgIndex ]);
+            } else {
+                console.log( 'Done!', successes, 'out of', imgArray.length, 'succeeded.' );
+            }
+        }
+    
+        </script>
+    </body>
+</html>
