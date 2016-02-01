@@ -99,7 +99,7 @@ CharacterFinder.prototype.onImgload = function(){
                         continue;
                     } else if( j === 7 && numberShapes[ i ].length < 150 ){
                         continue;
-                    } else if( j === 8 && numberShapes[ i ].length < 175 ){
+                    } else if( j === 8 && numberShapes[ i ].length < 170 ){
                         continue;
                     } else if( j === 9 && numberShapes[ i ].length < 220 ){
                         continue;
