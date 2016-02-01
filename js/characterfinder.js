@@ -32,6 +32,7 @@ CharacterFinder.prototype.onImgload = function(){
     var correct = 0;
     var numberShapes = [];
     var resultingNumbers = [];
+    var validShapes = 0;
 
     this.context.drawImage( this.img, 0, this.img.height - this.ypos, this.width, this.height, 0, 0, this.width, this.height );
 
@@ -58,7 +59,7 @@ CharacterFinder.prototype.onImgload = function(){
         }
 
         if( boundaries.xmax - boundaries.xmin < 25 && ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) > 1.1 ){
-
+            validShapes = validShapes + 1;
             this.drawRect( boundaries.xmin - 2, boundaries.ymin - 2, boundaries.xmax + 2, boundaries.ymax + 2, '#f00' );
             correct++;
 
@@ -117,8 +118,11 @@ CharacterFinder.prototype.onImgload = function(){
         }
     }
 
-    // Fallback to false if we match nothing
     if( resultingNumbers.length === 0 ){
+        // Fallback to false if we match nothing
+        resultingNumbers = false;
+    } else if( resultingNumbers.length !== validShapes ){
+        // Fallback to false if we don't match all the numbers we should
         resultingNumbers = false;
     }
 
