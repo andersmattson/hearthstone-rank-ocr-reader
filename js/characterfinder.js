@@ -81,36 +81,34 @@ CharacterFinder.prototype.onImgload = function(){
                 }
 
                 if( bestAnswer == null || bestAnswerValue > sum ){
-
-                    // Check the minimum pixel area needed for each number
-                    if( j === 0 && numberShapes[ i ].length < 130 ) {
-                        continue;
-                    } else if( j === 1 && numberShapes[ i ].length < 120 ){
-                        continue;
-                    } else if( j === 2 && numberShapes[ i ].length < 140 ){
-                        continue;
-                    } else if( j === 3 && numberShapes[ i ].length < 170 ){
-                        continue;
-                    } else if( j === 4 && numberShapes[ i ].length < 140 ){
-                        continue;
-                    } else if( j === 5 && numberShapes[ i ].length < 170 ){
-                        continue;
-                    } else if( j === 6 && numberShapes[ i ].length < 170 ){
-                        continue;
-                    } else if( j === 7 && numberShapes[ i ].length < 150 ){
-                        continue;
-                    } else if( j === 8 && numberShapes[ i ].length < 170 ){
-                        continue;
-                    } else if( j === 9 && numberShapes[ i ].length < 220 ){
-                        continue;
-                    }
-
                     bestAnswer = j;
                     bestAnswerValue = sum;
                 }
 
             }
 
+            // Check the minimum pixel area needed for each number
+            if( bestAnswer === 0 && numberShapes[ i ].length < 130 ) {
+                bestAnswer = null;
+            } else if( bestAnswer === 1 && numberShapes[ i ].length < 120 ){
+                bestAnswer = null;
+            } else if( bestAnswer === 2 && numberShapes[ i ].length < 140 ){
+                bestAnswer = null;
+            } else if( bestAnswer === 3 && numberShapes[ i ].length < 170 ){
+                bestAnswer = null;
+            } else if( bestAnswer === 4 && numberShapes[ i ].length < 140 ){
+                bestAnswer = null;
+            } else if( bestAnswer === 5 && numberShapes[ i ].length < 170 ){
+                bestAnswer = null;
+            } else if( bestAnswer === 6 && numberShapes[ i ].length < 170 ){
+                bestAnswer = null;
+            } else if( bestAnswer === 7 && numberShapes[ i ].length < 150 ){
+                bestAnswer = null;
+            } else if( bestAnswer === 8 && numberShapes[ i ].length < 170 ){
+                bestAnswer = null;
+            } else if( bestAnswer === 9 && numberShapes[ i ].length < 220 ){
+                bestAnswer = null;
+            }
 
             if( bestAnswer !== null ){
                 resultingNumbers.push( bestAnswer );
