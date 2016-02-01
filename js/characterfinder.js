@@ -68,7 +68,6 @@ CharacterFinder.prototype.onImgload = function(){
             var bestAnswerValue = null;
 
             for( var j = 0; j < 10; j = j + 1 ){
-
                 var sum = 0;
 
                 var curve = getNumberAsNurb( j, boundaries.xmin + 1 , boundaries.ymin + 1, boundaries.xmax - boundaries.xmin - 2, boundaries.ymax - boundaries.ymin - 2 );
@@ -115,9 +114,11 @@ CharacterFinder.prototype.onImgload = function(){
 
             }
 
-            resultingNumbers.push( bestAnswer );
 
-            this.drawPixels( getNumberAsNurb( bestAnswer, boundaries.xmin + 1 , boundaries.ymin + 1, boundaries.xmax - boundaries.xmin - 2, boundaries.ymax - boundaries.ymin - 2 ), '#00f' );
+            if( bestAnswer !== null ){
+                resultingNumbers.push( bestAnswer );
+                this.drawPixels( getNumberAsNurb( bestAnswer, boundaries.xmin + 1 , boundaries.ymin + 1, boundaries.xmax - boundaries.xmin - 2, boundaries.ymax - boundaries.ymin - 2 ), '#00f' );
+            }
         }
     }
 
@@ -320,7 +321,6 @@ function nurbPlotToXY( arr, sx, sy ){
 }
 
 function getNumberAsNurb( n, sx, sy, width, height ){
-
     var interpCurve = getNumCurve( n, width, height );
 
     return nurbPlotToXY( verb.eval.Tess.rationalCurveRegularSample(interpCurve.asNurbs(), 100, false), sx, sy );
