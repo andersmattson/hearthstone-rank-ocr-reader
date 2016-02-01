@@ -5,50 +5,92 @@
         <title></title>
     </head>
     <body>
-        <input type="text" name="testvalue" id="testvalue"><button id="starttest">test</button> (Open console) <br>
+        <form>
+            <input type="text" name="testvalue" id="testvalue">
+            <button type="submit">
+                test
+            </button>
+        </form>
+        <button id="starttest">
+            Test all
+        </button>
+        (Open console) <br>
         <canvas id="canvas"></canvas>
 
         <script src="https://cdn.jsdelivr.net/jquery/3.0.0-beta1/jquery.min.js"></script>
         <script src="js/verb.js"></script>
         <script src="js/characterfinder.js"></script>
         <script>
-        
+
         var finder;
-        
-        window.onload = function(){
-            finder = new CharacterFinder( $( "#canvas" ).get( 0 ), 145, 60 );
-            
-            finder.onComplete(function( file, result){
-                console.log(file, result);
-                $("body").append($( "#canvas" ).clone( ));
-                doNext();
-            });
-            
-            $.getJSON('img/files.php', function(data){
-                imgArray = data;
-                finder.setImg('img/1183.jpg');
-            });
-            
-            $("#starttest").on('click', function(){
-                var name = $("#testvalue").val();
-                finder.setImg('img/' + name + '.jpg');
-            });
-        };
-        
         var currentImgIndex = 0;
         var successes = 0;
         var imgArray = [];
-        
+        var totalImages = 0;
+
+        window.onload = function(){
+            finder = new CharacterFinder( $( "#canvas" ).get( 0 ), 145, 60 );
+
+            finder.onComplete(function( file, result ){
+                var firstDot = file.indexOf( '.' );
+                var firstDash = file.indexOf( '-' );
+                var fileMatch;
+
+                if( firstDot > -1 && firstDash > -1 ){
+                    if( firstDot < firstDash ){
+                        fileMatch = file.substr( 0, firstDot );
+                    } else {
+                        fileMatch = file.substr( 0, firstDash );
+                    }
+                } else if( firstDot > -1 ){
+                    fileMatch = file.substr( 0, firstDot );
+                } else if( firstDash > -1 ){
+                    fileMatch = file.substr( 0, firstDash );
+                }
+
+                if( Number( fileMatch ) === result ){
+                    successes = successes + 1;
+                    console.log( ( currentImgIndex + 1 ) + '/' + totalImages + ' %c' + file + ' | ' + result, 'color: #1bc91b' );
+                } else {
+                    console.log( ( currentImgIndex + 1 ) + '/' + totalImages + ' %c' + file + ' | ' + result, 'color: #c21414' );
+                }
+
+                $("body").append($( "#canvas" ).clone( ));
+                doNext();
+            });
+
+            $("form").on('submit', function( event ){
+                event.preventDefault();
+
+                var name = $("#testvalue").val();
+                totalImages = 1;
+                currentImgIndex = 0;
+                successes = 0;
+                finder.setImg('img/' + name + '.jpg');
+                imgArray = false;
+            });
+
+            $("#starttest").on( 'click', function(){
+                $.getJSON('img/files.php', function(data){
+                    totalImages = data.length;
+                    currentImgIndex = 0;
+                    successes = 0;
+
+                    imgArray = data;
+                    finder.setImg( 'img/' + data[ 0 ] );
+                });
+            });
+        };
+
         function doNext(){
-            currentImgIndex++;
-            
+            currentImgIndex = currentImgIndex + 1;
+
             if( currentImgIndex < imgArray.length ){
                 finder.setImg('img/' + imgArray[ currentImgIndex ]);
             } else {
-                console.log( 'Done!', successes, 'out of', imgArray.length, 'succeeded.' );
+                console.log( 'Done!', successes, 'out of', totalImages, 'succeeded.' );
             }
         }
-    
         </script>
     </body>
 </html>
