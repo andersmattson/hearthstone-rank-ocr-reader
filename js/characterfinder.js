@@ -119,7 +119,7 @@ CharacterFinder.prototype.onImgload = function(){
         }
     }
 
-    // Fallback to 0 if we match nothing
+    // Fallback to false if we match nothing
     if( resultingNumbers.length === 0 ){
         resultingNumbers = false;
     }
