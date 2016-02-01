@@ -96,8 +96,17 @@ CharacterFinder.prototype.onImgload = function(){
     
     
 
+    // Fallback to 0 if we match nothing
+    if( resultingNumbers.length === 0 ){
+        resultingNumbers = false;
+    }
+
     for( var i = 0, l = this.onCompleteCallbacks.length; i < l; i++){
-        this.onCompleteCallbacks[ i ].bind( this )( this.img.src.split(/\//).pop(), parseInt(resultingNumbers.join('')) );
+        if( resultingNumbers ){
+            this.onCompleteCallbacks[ i ].bind( this )( this.img.src.split(/\//).pop(), parseInt(resultingNumbers.join('')) );
+        } else {
+            this.onCompleteCallbacks[ i ].bind( this )( this.img.src.split(/\//).pop(), resultingNumbers );
+        }
     }
     
 }
