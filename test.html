@@ -48,11 +48,20 @@
                     fileMatch = file.substr( 0, firstDash );
                 }
 
-                if( Number( fileMatch ) === result ){
-                    successes = successes + 1;
-                    console.log( ( currentImgIndex + 1 ) + '/' + totalImages + ' %c' + file + ' | ' + result, 'color: #1bc91b' );
+                if( Number( fileMatch ) === 0 ){
+                    if( false === result ){
+                        successes = successes + 1;
+                        console.log( ( currentImgIndex + 1 ) + '/' + totalImages + ' %c' + file + ' | ' + result, 'color: #1bc91b' );
+                    } else {
+                        console.log( ( currentImgIndex + 1 ) + '/' + totalImages + ' %c' + file + ' | ' + result, 'color: #c21414' );
+                    }
                 } else {
-                    console.log( ( currentImgIndex + 1 ) + '/' + totalImages + ' %c' + file + ' | ' + result, 'color: #c21414' );
+                    if( Number( fileMatch ) === result ){
+                        successes = successes + 1;
+                        console.log( ( currentImgIndex + 1 ) + '/' + totalImages + ' %c' + file + ' | ' + result, 'color: #1bc91b' );
+                    } else {
+                        console.log( ( currentImgIndex + 1 ) + '/' + totalImages + ' %c' + file + ' | ' + result, 'color: #c21414' );
+                    }
                 }
 
                 $("body").append($( "#canvas" ).clone( ));
