@@ -82,6 +82,33 @@ CharacterFinder.prototype.onImgload = function(){
                 }
 
                 if( bestAnswer == null || bestAnswerValue > sum ){
+
+                    // Check the minimum pixel area needed for each number
+                    /*
+                    if( j === 0 && numberShapes[ i ].length < 130 ) {
+                        continue;
+                    } else
+                    */
+                    if( j === 1 && numberShapes[ i ].length < 120 ){
+                        continue;
+                    } else if( j === 2 && numberShapes[ i ].length < 140 ){
+                        continue;
+                    } else if( j === 3 && numberShapes[ i ].length < 170 ){
+                        continue;
+                    } else if( j === 4 && numberShapes[ i ].length < 135 ){
+                        continue;
+                    } else if( j === 5 && numberShapes[ i ].length < 170 ){
+                        continue;
+                    } else if( j === 6 && numberShapes[ i ].length < 170 ){
+                        continue;
+                    } else if( j === 7 && numberShapes[ i ].length < 150 ){
+                        continue;
+                    } else if( j === 8 && numberShapes[ i ].length < 175 ){
+                        continue;
+                    } else if( j === 9 && numberShapes[ i ].length < 220 ){
+                        continue;
+                    }
+
                     bestAnswer = j;
                     bestAnswerValue = sum;
                 }
