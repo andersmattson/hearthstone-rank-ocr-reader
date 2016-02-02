@@ -247,10 +247,12 @@ CharacterFinder.prototype.drawRect = function( x1, y1, x2, y2, color ){
     this.context.strokeRect( x1, y1, x2 - x1, y2 - y1 );
 }
 
+/*
 CharacterFinder.prototype.getPixelIntensity = function( x, y ){
     var color = this.getPixelColor( x, y );
     return intensity( color.r, color.g, color.b );
 }
+*/
 
 /*
 CharacterFinder.prototype.diff = function( refcanvas ){
