@@ -9,6 +9,8 @@ if( isset( $_GET[ 'live' ] ) ):
     endforeach;
 else :
     $files = glob( "img/*.jpg" );
+    natsort( $files );
+    $files = array_values( $files );
 endif;
 
 echo json_encode( $files );
