@@ -67,6 +67,7 @@ CharacterFinder.prototype.onImgload = function(){
             var bestAnswer = null;
             var bestAnswerValue = null;
 
+            var canvasData = this.context.getImageData( 0, 0, this.width, this.height ).data;
             for( var j = 0; j < 10; j = j + 1 ){
                 var sum = 0;
 
@@ -74,7 +75,7 @@ CharacterFinder.prototype.onImgload = function(){
 
                 for(var k = 0, len = curve.length; k < len; k = k + 1 ){
 
-                    var pixelColor = this.getPixelColor( Math.round(curve[ k ].x), Math.round(curve[ k ].y) );
+                    var pixelColor = this.getPixelColor( Math.round(curve[ k ].x), Math.round(curve[ k ].y), canvasData );
                     //var diff = colorDiff( pixelColor, { r: 0, g: 255, b: 0 } ) / 255;
 
                     sum += colorDiff( pixelColor, { r: 0, g: 255, b: 0 } ) / 255;
@@ -160,48 +161,55 @@ CharacterFinder.prototype.traceAll = function( byColor ){
     var traceIndex = [];
     var value = byColor;
 
+    var canvasData = this.canvas.getContext( '2d' ).getImageData( 0, 0, this.width, this.height ).data;
+
     this.onPixels( ( function( x, y ){
-        var tracedShape = this.traceArea( x, y, value, traceIndex, byColor );
+        var tracedShape = this.traceArea( x, y, value, traceIndex, byColor, canvasData );
 
         if(tracedShape.length){
             tracedShapes.push( tracedShape );
         }
-    }).bind( this ));
+    }).bind( this ), canvasData );
 
     return tracedShapes;
 
 }
 
-CharacterFinder.prototype.traceArea = function ( startx, starty, value, index, byColor ){
+CharacterFinder.prototype.traceArea = function ( startx, starty, value, index, byColor, canvasData ){
     var traceIndex = index || [];
-    return this.traceAreaStepColor( startx, starty, value, traceIndex );
+    return this.traceAreaStepColor( startx, starty, value, traceIndex, canvasData );
 }
 
-CharacterFinder.prototype.traceAreaStepColor = function( startx, starty, color, index ){
+CharacterFinder.prototype.traceAreaStepColor = function( startx, starty, color, index, canvasData ){
 
     var result = [];
 
-    if( colorDiff( color, this.getPixelColor( startx, starty ) ) < 50 && index.indexOf( startx + ',' + starty ) == -1 ){
+    if( colorDiff( color, this.getPixelColor( startx, starty, canvasData ) ) < 50 && index.indexOf( startx + ',' + starty ) == -1 ){
         index.push( startx + ',' + starty );
 
         result.push( { x: startx, y: starty } );
 
-        if( index.indexOf( ( startx + 1 ) + ',' + ( starty ) ) == -1 )
-            result = result.concat( this.traceAreaStepColor( startx + 1, starty, color, index ) );
-        if( index.indexOf( ( startx ) + ',' + ( starty + 1 ) ) == -1 )
-            result = result.concat( this.traceAreaStepColor( startx, starty + 1, color, index ) );
+        if( index.indexOf( ( startx + 1 ) + ',' + ( starty ) ) === -1 ){
+            result = result.concat( this.traceAreaStepColor( startx + 1, starty, color, index, canvasData ) );
+        }
 
-        if( index.indexOf( ( startx - 1 ) + ',' + ( starty ) ) == -1 )
-            result = result.concat( this.traceAreaStepColor( startx - 1, starty, color, index ) );
-        if( index.indexOf( ( startx ) + ',' + ( starty - 1 ) ) == -1 )
-            result = result.concat( this.traceAreaStepColor( startx, starty - 1, color, index ) );
+        if( index.indexOf( ( startx ) + ',' + ( starty + 1 ) ) === -1 ) {
+            result = result.concat( this.traceAreaStepColor( startx, starty + 1, color, index, canvasData ) );
+        }
+
+        if( index.indexOf( ( startx - 1 ) + ',' + ( starty ) ) === -1 ){
+            result = result.concat( this.traceAreaStepColor( startx - 1, starty, color, index, canvasData ) );
+        }
+
+        if( index.indexOf( ( startx ) + ',' + ( starty - 1 ) ) === -1 ) {
+            result = result.concat( this.traceAreaStepColor( startx, starty - 1, color, index, canvasData ) );
+        }
     }
 
     return result;
 }
 
-CharacterFinder.prototype.onPixels = function( fn ){
-    var data = this.context.getImageData( 0, 0, this.width, this.height ).data;
+CharacterFinder.prototype.onPixels = function( fn, data ){
 
     for(var x = 0; x < this.width; x++) {
         for(var y = 0; y < this.height; y++) {
@@ -215,17 +223,12 @@ CharacterFinder.prototype.onPixels = function( fn ){
     }
 }
 
-CharacterFinder.prototype.getPixelColor = function( x, y, canvas ){
-
-    canvas = canvas || this.canvas;
-
-    var data = canvas.getContext('2d').getImageData( 0, 0, this.width, this.height ).data;
-
+CharacterFinder.prototype.getPixelColor = function( x, y, data ){
     return {
-        r: data[ ( ( canvas.width * y ) + x ) * 4 ],
-        g: data[ ( ( canvas.width * y ) + x ) * 4 + 1 ],
-        b: data[ ( ( canvas.width * y ) + x ) * 4 + 2 ],
-        a: data[ ( ( canvas.width * y ) + x ) * 4 + 3 ]
+        r: data[ ( ( this.canvas.width * y ) + x ) * 4 ],
+        g: data[ ( ( this.canvas.width * y ) + x ) * 4 + 1 ],
+        b: data[ ( ( this.canvas.width * y ) + x ) * 4 + 2 ],
+        a: data[ ( ( this.canvas.width * y ) + x ) * 4 + 3 ]
     };
 }
 
