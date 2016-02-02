@@ -62,7 +62,11 @@ CharacterFinder.prototype.onImgload = function(){
             boundaries.xmin -= 4;
         }
 
-        if( boundaries.xmax - boundaries.xmin < 25 && ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) > 1.1 ){
+        if(
+            boundaries.xmax - boundaries.xmin < 25 &&
+            ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) > 1.1 &&
+            ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) < 2
+        ){
             validShapes = validShapes + 1;
             this.drawRect( boundaries.xmin - 2, boundaries.ymin - 2, boundaries.xmax + 2, boundaries.ymax + 2, '#f00' );
             correct++;
@@ -189,7 +193,7 @@ CharacterFinder.prototype.traceAreaStepColor = function( startx, starty, color, 
 
     var result = [];
 
-    if( colorDiff( color, this.getPixelColor( startx, starty, canvasData ) ) < 50 && index.indexOf( startx + ',' + starty ) === -1 && index.length < 3000 ){
+    if( colorDiff( color, this.getPixelColor( startx, starty, canvasData ) ) < 50 && index.indexOf( startx + ',' + starty ) === -1 && index.length < 2500 ){
         index.push( startx + ',' + starty );
 
         result.push( {
