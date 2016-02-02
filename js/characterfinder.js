@@ -152,7 +152,7 @@ CharacterFinder.prototype.contrast = function(){
 
 CharacterFinder.prototype.drawPixel = function( x, y, color ){
     this.context.fillStyle = color || '#FFF';
-    this.context.fillRect(x,y,1,1);
+    this.context.fillRect( x, y, 1, 1 );
 }
 
 CharacterFinder.prototype.traceAll = function( byColor ){
