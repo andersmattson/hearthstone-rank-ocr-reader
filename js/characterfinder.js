@@ -65,8 +65,8 @@ CharacterFinder.prototype.onImgload = function(){
         if(
             boundaries.ymin !== 0 &&
             boundaries.xmax - boundaries.xmin < 25 &&
-            ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) > 1.1 &&
-            ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) < 2
+            ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) > 1.15 &&
+            ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) < 1.9
         ){
             validShapes = validShapes + 1;
             this.drawRect( boundaries.xmin - 2, boundaries.ymin - 2, boundaries.xmax + 2, boundaries.ymax + 2, '#f00' );
