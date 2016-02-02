@@ -6,8 +6,16 @@
             Tester
         </title>
         <style>
-            canvas {
-                display: block;
+            .misses-wrapper {
+                width: 50%;
+            }
+
+            .match {
+                border: 5px solid #29df0b;
+            }
+
+            .no-match {
+                border: 5px solid red;
             }
         </style>
     </head>
@@ -19,16 +27,16 @@
             </button>
         </form>
         <button id="starttest">
-            Test all
+            Run test suite
         </button>
         <button id="startlivetest">
-            Test live
+            Test live images
         </button>
         Last match
         <canvas id="canvas"></canvas>
 
         Misses
-        <div class="js-misses"></div>
+        <div class="misses-wrapper js-misses"></div>
         <div class="js-log" style="position: absolute; width: 50%; height: 100%; right: 0; top: 0; overflow-y: scroll;"></div>
 
         <script src="https://cdn.jsdelivr.net/jquery/3.0.0-beta1/jquery.min.js"></script>
@@ -54,7 +62,7 @@
             $( '.js-log' ).prepend( '<div style="color: ' + color + ';">' + text + '</div>' );
         }
 
-        function keepCanvas(){
+        function keepCanvas( result ){
             var oldCanvas = $( '#canvas' ).get( 0 );
             //create a new canvas
             var newCanvas = document.createElement( 'canvas' );
@@ -67,8 +75,14 @@
             //apply the old canvas to the new one
             context.drawImage(oldCanvas, 0, 0);
 
+            if( result !== false ){
+                var canvasClass = 'match';
+            } else {
+                var canvasClass = 'no-match';
+            }
+
             //return the new canvas
-            $( '.js-misses' ).append( newCanvas );
+            $( '.js-misses' ).append( $( newCanvas ).addClass( canvasClass ) );
         }
 
         window.onload = function(){
@@ -96,7 +110,7 @@
                         successes = successes + 1;
                         writeToLog( ( currentImgIndex + 1 ) + '/' + totalImages + ' ' + file + ' | ' + result, 'good' );
                     } else {
-                        keepCanvas();
+                        keepCanvas( result );
                         writeToLog( ( currentImgIndex + 1 ) + '/' + totalImages + ' ' + file + ' | ' + result, 'bad' );
                     }
                 } else {
@@ -104,7 +118,7 @@
                         successes = successes + 1;
                         writeToLog( ( currentImgIndex + 1 ) + '/' + totalImages + ' ' + file + ' | ' + result, 'good' );
                     } else {
-                        keepCanvas();
+                        keepCanvas( result );
                         writeToLog( ( currentImgIndex + 1 ) + '/' + totalImages + ' ' + file + ' | ' + result, 'bad' );
                     }
                 }
@@ -122,7 +136,10 @@
             });
 
             $("#starttest").on( 'click', function(){
+                $( '.js-misses' ).empty();
+                writeToLog( 'Starting JSON request for local images', 'neutral' );
                 $.getJSON('data.php', function(data){
+                    writeToLog( 'Got ' + data.length + ' images', 'neutral' );
                     totalImages = data.length;
                     currentImgIndex = 0;
                     successes = 0;
@@ -133,7 +150,10 @@
             });
 
             $("#startlivetest").on( 'click', function(){
+                $( '.js-misses' ).empty();
+                writeToLog( 'Starting JSON request for live images', 'neutral' );
                 $.getJSON('data.php?live', function(data){
+                    writeToLog( 'Got ' + data.length + ' images', 'neutral' );
                     totalImages = data.length;
                     currentImgIndex = 0;
                     successes = 0;
