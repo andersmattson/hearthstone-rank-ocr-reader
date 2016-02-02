@@ -35,7 +35,12 @@ CharacterFinder.prototype.onImgload = function(){
 
     this.context.drawImage( this.img, 0, this.img.height - this.ypos, this.width, this.height, 0, 0, this.width, this.height );
 
-    var tracedShapes = this.traceAll( { r: 221, g: 216, b: 136, a: 1 } );
+    var tracedShapes = this.traceAll( {
+        r: 221,
+        g: 216,
+        b: 136,
+        a: 1
+    } );
 
     for(var i = 0, l = tracedShapes.length; i < l; i++ ){
         if( tracedShapes[ i ].length < 90 || tracedShapes[ i ].length > 400 ){
@@ -187,7 +192,10 @@ CharacterFinder.prototype.traceAreaStepColor = function( startx, starty, color, 
     if( colorDiff( color, this.getPixelColor( startx, starty, canvasData ) ) < 50 && index.indexOf( startx + ',' + starty ) == -1 ){
         index.push( startx + ',' + starty );
 
-        result.push( { x: startx, y: starty } );
+        result.push( {
+            x: startx,
+            y: starty
+        } );
 
         if( index.indexOf( ( startx + 1 ) + ',' + ( starty ) ) === -1 ){
             result = result.concat( this.traceAreaStepColor( startx + 1, starty, color, index, canvasData ) );
