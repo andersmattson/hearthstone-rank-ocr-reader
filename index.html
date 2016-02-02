@@ -2,7 +2,14 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title></title>
+        <title>
+            Tester
+        </title>
+        <style>
+            canvas {
+                display: block;
+            }
+        </style>
     </head>
     <body>
         <form>
@@ -14,8 +21,9 @@
         <button id="starttest">
             Test all
         </button>
-        (Open console) <br>
         <canvas id="canvas"></canvas>
+
+        <div class="js-log" style="position: absolute; width: 50%; height: 100%; right: 0; top: 0; overflow-y: scroll;"></div>
 
         <script src="https://cdn.jsdelivr.net/jquery/3.0.0-beta1/jquery.min.js"></script>
         <script src="js/verb.js"></script>
@@ -27,6 +35,35 @@
         var successes = 0;
         var imgArray = [];
         var totalImages = 0;
+
+        function writeToLog( text, type ){
+            var color = '#4349a4';
+
+            if( type === 'good' ){
+                color = '#409c2d';
+            } else if( type === 'bad' ){
+                color = '#c73b3b';
+            }
+
+            $( '.js-log' ).prepend( '<div style="color: ' + color + ';">' + text + '</div>' );
+        }
+
+        function keepCanvas(){
+            var oldCanvas = $( '#canvas' ).get( 0 );
+            //create a new canvas
+            var newCanvas = document.createElement( 'canvas' );
+            var context = newCanvas.getContext( '2d' );
+
+            //set dimensions
+            newCanvas.width = oldCanvas.width;
+            newCanvas.height = oldCanvas.height;
+
+            //apply the old canvas to the new one
+            context.drawImage(oldCanvas, 0, 0);
+
+            //return the new canvas
+            $( 'body' ).append( newCanvas );
+        }
 
         window.onload = function(){
             finder = new CharacterFinder( $( "#canvas" ).get( 0 ), 145, 70 );
@@ -51,20 +88,20 @@
                 if( Number( fileMatch ) === 0 ){
                     if( false === result ){
                         successes = successes + 1;
-                        console.log( ( currentImgIndex + 1 ) + '/' + totalImages + ' %c' + file + ' | ' + result, 'color: #1bc91b' );
+                        writeToLog( ( currentImgIndex + 1 ) + '/' + totalImages + ' ' + file + ' | ' + result, 'good' );
                     } else {
-                        console.log( ( currentImgIndex + 1 ) + '/' + totalImages + ' %c' + file + ' | ' + result, 'color: #c21414' );
+                        keepCanvas();
+                        writeToLog( ( currentImgIndex + 1 ) + '/' + totalImages + ' ' + file + ' | ' + result, 'bad' );
                     }
                 } else {
                     if( Number( fileMatch ) === result ){
                         successes = successes + 1;
-                        console.log( ( currentImgIndex + 1 ) + '/' + totalImages + ' %c' + file + ' | ' + result, 'color: #1bc91b' );
+                        writeToLog( ( currentImgIndex + 1 ) + '/' + totalImages + ' ' + file + ' | ' + result, 'good' );
                     } else {
-                        console.log( ( currentImgIndex + 1 ) + '/' + totalImages + ' %c' + file + ' | ' + result, 'color: #c21414' );
+                        keepCanvas();
+                        writeToLog( ( currentImgIndex + 1 ) + '/' + totalImages + ' ' + file + ' | ' + result, 'bad' );
                     }
                 }
-
-                $("body").append($( "#canvas" ).clone( ));
                 doNext();
             });
 
@@ -97,7 +134,7 @@
             if( currentImgIndex < imgArray.length ){
                 finder.setImg('img/' + imgArray[ currentImgIndex ]);
             } else {
-                console.log( 'Done!', successes, 'out of', totalImages, 'succeeded.' );
+                writeToLog( 'Done! ' + successes + ' out of ' + totalImages + ' succeeded.', 'neutral' );
             }
         }
         </script>
