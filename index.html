@@ -21,8 +21,14 @@
         <button id="starttest">
             Test all
         </button>
+        <button id="startlivetest">
+            Test live
+        </button>
+        Last match
         <canvas id="canvas"></canvas>
 
+        Misses
+        <div class="js-misses"></div>
         <div class="js-log" style="position: absolute; width: 50%; height: 100%; right: 0; top: 0; overflow-y: scroll;"></div>
 
         <script src="https://cdn.jsdelivr.net/jquery/3.0.0-beta1/jquery.min.js"></script>
@@ -62,7 +68,7 @@
             context.drawImage(oldCanvas, 0, 0);
 
             //return the new canvas
-            $( 'body' ).append( newCanvas );
+            $( '.js-misses' ).append( newCanvas );
         }
 
         window.onload = function(){
@@ -107,7 +113,6 @@
 
             $("form").on('submit', function( event ){
                 event.preventDefault();
-
                 var name = $("#testvalue").val();
                 totalImages = 1;
                 currentImgIndex = 0;
@@ -117,13 +122,24 @@
             });
 
             $("#starttest").on( 'click', function(){
-                $.getJSON('img/files.php', function(data){
+                $.getJSON('data.php', function(data){
                     totalImages = data.length;
                     currentImgIndex = 0;
                     successes = 0;
 
                     imgArray = data;
-                    finder.setImg( 'img/' + data[ 0 ] );
+                    finder.setImg( data[ 0 ] );
+                });
+            });
+
+            $("#startlivetest").on( 'click', function(){
+                $.getJSON('data.php?live', function(data){
+                    totalImages = data.length;
+                    currentImgIndex = 0;
+                    successes = 0;
+
+                    imgArray = data;
+                    finder.setImg( data[ 0 ] );
                 });
             });
         };
@@ -132,7 +148,7 @@
             currentImgIndex = currentImgIndex + 1;
 
             if( currentImgIndex < imgArray.length ){
-                finder.setImg('img/' + imgArray[ currentImgIndex ]);
+                finder.setImg( imgArray[ currentImgIndex ]);
             } else {
                 writeToLog( 'Done! ' + successes + ' out of ' + totalImages + ' succeeded.', 'neutral' );
             }
