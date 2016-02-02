@@ -13,7 +13,6 @@ var CharacterFinder = function( canvas, width, height ){
     this.width = width;
     this.height = height;
     this.ypos = 185;
-    this.contrastLimit = 140;
 
     this.canvas.width = this.width;
     this.canvas.height = this.height;
@@ -76,7 +75,7 @@ CharacterFinder.prototype.onImgload = function(){
                 for(var k = 0, len = curve.length; k < len; k = k + 1 ){
 
                     var pixelColor = this.getPixelColor( Math.round(curve[ k ].x), Math.round(curve[ k ].y) );
-                    var diff = colorDiff( pixelColor, { r: 0, g: 255, b: 0 } ) / 255;
+                    //var diff = colorDiff( pixelColor, { r: 0, g: 255, b: 0 } ) / 255;
 
                     sum += colorDiff( pixelColor, { r: 0, g: 255, b: 0 } ) / 255;
                 }
@@ -136,6 +135,7 @@ CharacterFinder.prototype.onImgload = function(){
 
 }
 
+/*
 CharacterFinder.prototype.contrast = function(){
     var self = this;
 
@@ -148,6 +148,7 @@ CharacterFinder.prototype.contrast = function(){
     });
 
 };
+*/
 
 CharacterFinder.prototype.drawPixel = function( x, y, color ){
     this.context.fillStyle = color || '#FFF';
@@ -251,6 +252,7 @@ CharacterFinder.prototype.getPixelIntensity = function( x, y ){
     return intensity( color.r, color.g, color.b );
 }
 
+/*
 CharacterFinder.prototype.diff = function( refcanvas ){
     var sum = 0;
     var num = 0;
@@ -264,6 +266,7 @@ CharacterFinder.prototype.diff = function( refcanvas ){
 
     return sum;
 }
+*/
 
 CharacterFinder.prototype.onComplete = function( fn ){
     this.onCompleteCallbacks.push( fn );
