@@ -189,7 +189,7 @@ CharacterFinder.prototype.traceAreaStepColor = function( startx, starty, color, 
 
     var result = [];
 
-    if( colorDiff( color, this.getPixelColor( startx, starty, canvasData ) ) < 50 && index.indexOf( startx + ',' + starty ) == -1 ){
+    if( colorDiff( color, this.getPixelColor( startx, starty, canvasData ) ) < 50 && index.indexOf( startx + ',' + starty ) === -1 && index.length < 3000 ){
         index.push( startx + ',' + starty );
 
         result.push( {
