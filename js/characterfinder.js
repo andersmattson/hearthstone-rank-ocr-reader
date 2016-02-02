@@ -101,7 +101,7 @@ CharacterFinder.prototype.onImgload = function(){
                 bestAnswer = null;
             } else if( bestAnswer === 5 && numberShapes[ i ].length < 170 ){
                 bestAnswer = null;
-            } else if( bestAnswer === 6 && numberShapes[ i ].length < 170 ){
+            } else if( bestAnswer === 6 && numberShapes[ i ].length < 222 ){
                 bestAnswer = null;
             } else if( bestAnswer === 7 && numberShapes[ i ].length < 150 ){
                 bestAnswer = null;
