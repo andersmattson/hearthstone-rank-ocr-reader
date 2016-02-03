@@ -66,7 +66,10 @@ CharacterFinder.prototype.onImgload = function(){
             boundaries.ymin !== 0 &&
             boundaries.xmax - boundaries.xmin < 25 &&
             ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) > 1.15 &&
-            ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) < 1.9
+            ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) < 1.9 &&
+            ( boundaries.ymax - boundaries.ymin ) > 15 &&
+            boundaries.xmax < this.width - 1 &&
+            boundaries.ymax < this.height - 1
         ){
             validShapes = validShapes + 1;
             this.drawRect( boundaries.xmin - 2, boundaries.ymin - 2, boundaries.xmax + 2, boundaries.ymax + 2, '#f00' );
@@ -86,39 +89,28 @@ CharacterFinder.prototype.onImgload = function(){
                 for(var k = 0, len = curve.length; k < len; k = k + 1 ){
 
                     var pixelColor = this.getPixelColor( Math.round(curve[ k ].x), Math.round(curve[ k ].y), canvasData );
-                    //var diff = colorDiff( pixelColor, { r: 0, g: 255, b: 0 } ) / 255;
 
-                    sum += colorDiff( pixelColor, { r: 0, g: 255, b: 0 } ) / 255;
+                    sum += colorDiff( pixelColor, {
+                        r: 0,
+                        g: 255,
+                        b: 0
+                    }) / 255;
                 }
 
-                if( bestAnswer == null || bestAnswerValue > sum ){
+                if( ( bestAnswer == null || bestAnswerValue > sum ) && sum < 4 ){
                     bestAnswer = j;
                     bestAnswerValue = sum;
                 }
 
             }
 
-            // Check the minimum pixel area needed for each number
-            if( bestAnswer === 0 && numberShapes[ i ].length < 130 ) {
-                bestAnswer = null;
-            } else if( bestAnswer === 1 && numberShapes[ i ].length < 120 ){
-                bestAnswer = null;
-            } else if( bestAnswer === 2 && numberShapes[ i ].length < 140 ){
-                bestAnswer = null;
-            } else if( bestAnswer === 3 && numberShapes[ i ].length < 170 ){
-                bestAnswer = null;
-            } else if( bestAnswer === 4 && numberShapes[ i ].length < 140 ){
-                bestAnswer = null;
-            } else if( bestAnswer === 5 && numberShapes[ i ].length < 170 ){
-                bestAnswer = null;
-            } else if( bestAnswer === 6 && numberShapes[ i ].length < 222 ){
-                bestAnswer = null;
-            } else if( bestAnswer === 7 && numberShapes[ i ].length < 150 ){
-                bestAnswer = null;
-            } else if( bestAnswer === 8 && numberShapes[ i ].length < 170 ){
-                bestAnswer = null;
-            } else if( bestAnswer === 9 && numberShapes[ i ].length < 220 ){
-                bestAnswer = null;
+            // Add special case matching for number area sizes
+            if( bestAnswer === 1 && numberShapes[ i ].length < 120 ){
+                continue;
+            } else if( bestAnswer === 4 && numberShapes[ i ].length < 170 ){
+                continue;
+            } else if( bestAnswer === 7 && numberShapes[ i ].length < 130 ){
+                continue;
             }
 
             if( bestAnswer !== null ){
@@ -133,6 +125,9 @@ CharacterFinder.prototype.onImgload = function(){
         resultingNumbers = false;
     } else if( resultingNumbers.length !== validShapes ){
         // Fallback to false if we don't match all the numbers we should
+        resultingNumbers = false;
+    } else if( resultingNumbers.length === 1 && resultingNumbers[ 0 ] === 1 ){
+        // It's too hard to match a single one, skip that for now
         resultingNumbers = false;
     }
 
@@ -243,7 +238,7 @@ CharacterFinder.prototype.onPixels = function( fn, data ){
 
     for(var x = 0; x < this.width; x++) {
         for(var y = 0; y < this.height; y++) {
-            var red = data[((this.width * y) + x) * 4];
+            var red = data[(( this.width * y ) + x) * 4];
             var green = data[((this.width * y) + x) * 4 + 1];
             var blue = data[((this.width * y) + x) * 4 + 2];
             var alpha = data[((this.width * y) + x) * 4 + 3];
