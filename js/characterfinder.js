@@ -206,16 +206,29 @@ CharacterFinder.prototype.traceAreaStepColor = function( startx, starty, color, 
             y: starty
         } );
 
+
         if( index.indexOf( ( startx + 1 ) + ',' + ( starty ) ) === -1 ){
             result = result.concat( this.traceAreaStepColor( startx + 1, starty, color, index, canvasData ) );
+        }
+
+        if( result.length > 400 ){
+            return result;
         }
 
         if( index.indexOf( ( startx ) + ',' + ( starty + 1 ) ) === -1 ) {
             result = result.concat( this.traceAreaStepColor( startx, starty + 1, color, index, canvasData ) );
         }
 
+        if( result.length > 400 ){
+            return result;
+        }
+
         if( index.indexOf( ( startx - 1 ) + ',' + ( starty ) ) === -1 ){
             result = result.concat( this.traceAreaStepColor( startx - 1, starty, color, index, canvasData ) );
+        }
+
+        if( result.length > 400 ){
+            return result;
         }
 
         if( index.indexOf( ( startx ) + ',' + ( starty - 1 ) ) === -1 ) {
