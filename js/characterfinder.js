@@ -97,7 +97,7 @@ CharacterFinder.prototype.onImgload = function(){
                     }) / 255;
                 }
 
-                if( ( bestAnswer == null || bestAnswerValue > sum ) && sum < 4 ){
+                if( ( bestAnswer == null || bestAnswerValue > sum ) && sum < 7 ){
                     bestAnswer = j;
                     bestAnswerValue = sum;
                 }
