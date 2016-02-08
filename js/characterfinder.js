@@ -12,7 +12,7 @@ var CharacterFinder = function( canvas, width, height ){
     this.context = canvas.getContext('2d');
     this.width = width;
     this.height = height;
-    this.ypos = 185;
+    this.ypos = 205;
 
     this.canvas.width = this.width;
     this.canvas.height = this.height;
@@ -31,7 +31,7 @@ CharacterFinder.prototype.onImgload = function(){
     var correct = 0;
     var numberShapes = [];
     var resultingNumbers = [];
-    var validShapes = 0;
+    var validShapes = [];
 
     this.context.drawImage( this.img, 0, this.img.height - this.ypos, this.width, this.height, 0, 0, this.width, this.height );
 
@@ -56,22 +56,18 @@ CharacterFinder.prototype.onImgload = function(){
 
         var boundaries = findBoundaries( numberShapes[ i ] );
 
-        // Compensate bounding box for narrow 1's, since they match too many numbers.
-        if( (boundaries.xmax - boundaries.xmin) / ( boundaries.ymax - boundaries.ymin ) < 0.5 ){
-            boundaries.xmax += 4;
-            boundaries.xmin -= 4;
-        }
+        //console.log( ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) );
 
         if(
             boundaries.ymin !== 0 &&
             boundaries.xmax - boundaries.xmin < 25 &&
-            ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) > 1.15 &&
-            ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) < 1.9 &&
+            ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) >= 0.95 &&
+            ( boundaries.ymax - boundaries.ymin ) / ( boundaries.xmax - boundaries.xmin ) < 1.95 &&
             ( boundaries.ymax - boundaries.ymin ) > 15 &&
             boundaries.xmax < this.width - 1 &&
             boundaries.ymax < this.height - 1
         ){
-            validShapes = validShapes + 1;
+            validShapes.push( i );
             this.drawRect( boundaries.xmin - 2, boundaries.ymin - 2, boundaries.xmax + 2, boundaries.ymax + 2, '#f00' );
             correct++;
 
@@ -97,20 +93,35 @@ CharacterFinder.prototype.onImgload = function(){
                     }) / 255;
                 }
 
-                if( ( bestAnswer == null || bestAnswerValue > sum ) && sum < 7 ){
+                if(
+                    ( bestAnswer == null || bestAnswerValue > sum ) && sum < 6.3
+                    || ( bestAnswer === 5 && sum - bestAnswerValue < 1.2 )
+                 ){
                     bestAnswer = j;
                     bestAnswerValue = sum;
                 }
+            }
 
+            if( bestAnswer === 4 ){
+                console.log( numberShapes[ i ].length, bestAnswerValue );
             }
 
             // Add special case matching for number area sizes
-            if( bestAnswer === 1 && numberShapes[ i ].length < 120 ){
+            if( bestAnswer === 1 && numberShapes[ i ].length < 115 ){
                 continue;
-            } else if( bestAnswer === 4 && numberShapes[ i ].length < 170 ){
+            } else if( bestAnswer === 4 && ( numberShapes[ i ].length < 155 || boundaries.ymax - boundaries.ymin < 20 ) ){
                 continue;
-            } else if( bestAnswer === 7 && ( numberShapes[ i ].length < 160 || boundaries.ymax - boundaries.ymin < 22 ) ){
+            } else if( bestAnswer === 5 && numberShapes[ i ].length < 170 ){
                 continue;
+            } else if( bestAnswer === 7 && ( numberShapes[ i ].length < 140 || boundaries.ymax - boundaries.ymin < 22 ) ){
+                continue;
+            }
+
+            if( resultingNumbers.length > 0 ){
+                var previousBoundaries = findBoundaries( numberShapes[ validShapes[ validShapes.length - 2 ] ] );
+                if( boundaries.xmin - previousBoundaries.xmax > 11 ){
+                    continue;
+                }
             }
 
             if( bestAnswer !== null ){
@@ -123,7 +134,7 @@ CharacterFinder.prototype.onImgload = function(){
     if( resultingNumbers.length === 0 ){
         // Fallback to false if we match nothing
         resultingNumbers = false;
-    } else if( resultingNumbers.length !== validShapes ){
+    } else if( resultingNumbers.length !== validShapes.length ){
         // Fallback to false if we don't match all the numbers we should
         resultingNumbers = false;
     } else if( resultingNumbers.length === 1 && resultingNumbers[ 0 ] === 1 ){
@@ -331,6 +342,12 @@ function findBoundaries( shape ){
         ret.xmax = Math.max( ret.xmax, shape[i].x );
         ret.ymin = Math.min( ret.ymin, shape[i].y );
         ret.ymax = Math.max( ret.ymax, shape[i].y );
+    }
+
+    // Compensate bounding box for narrow 1's, since they match too many numbers.
+    if( (ret.xmax - ret.xmin) / ( ret.ymax - ret.ymin ) < 0.5 ){
+        ret.xmax = ret.xmax + 4;
+        ret.xmin = ret.xmin - 4;
     }
 
     return ret;
